@@ -3,78 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Mini App</title>
 
-<link rel="stylesheet" href="style.css">
+<!-- Telegram WebApp -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont;
+    background: #0f0f0f;
+    color: white;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #111;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+.tab {
+    text-align: center;
+    font-size: 12px;
+    color: gray;
+    cursor: pointer;
+}
+
+.tab.active {
+    color: #4facfe;
+}
+</style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div>👋 Привет</div>
-    <div class="balance">0 TON</div>
-</div>
+<div class="container" id="main">
 
-<!-- ГЛАВНАЯ -->
-<div id="home" class="page active">
-    <div class="card free" onclick="openPage('free')">🎁 Бесплатно</div>
-    <div class="card roulette" onclick="openPage('roulette')">⭐ Рулетка</div>
-</div>
-
-<!-- FREE -->
-<div id="free" class="page">
-    <h2>🎁 Бесплатный кейс</h2>
-
-    <div class="case-box">
-        <div id="case">🎁</div>
+    <div class="card">
+        <h2 id="username">Загрузка...</h2>
+        <p>ID: <span id="userid"></span></p>
     </div>
 
-    <div id="free-result">Нажми открыть</div>
-    <button class="open-btn" onclick="openCase()">Открыть</button>
-</div>
-
-<!-- ROULETTE -->
-<div id="roulette" class="page">
-    <h2>🎰 Рулетка</h2>
-    <div id="result">Нажми крутить</div>
-    <button onclick="spin()">Крутить</button>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="page">
-
-    <div class="profile-card">
-        <img id="avatar" class="avatar">
-        <div id="username">@user</div>
-
-        <div class="stats">
-            <div>
-                <div id="games">0</div>
-                <span>Games</span>
-            </div>
-            <div>
-                <div id="best">0 TON</div>
-                <span>Best win</span>
-            </div>
-        </div>
+    <div class="card">
+        <h3>🎁 Бесплатный кейс</h3>
+        <p id="freeStatus">Проверка...</p>
+        <div class="btn" onclick="openFreeCase()">Открыть</div>
     </div>
 
-    <button class="invite-btn" onclick="invite()">Invite friends +</button>
+    <div class="card">
+        <h3>🎡 Рулетка</h3>
+        <div class="btn">Играть</div>
+    </div>
 
 </div>
 
-<!-- NAV -->
-<div class="bottom-nav">
-    <div onclick="openPage('home')">Кейсы</div>
-    <div>Конкурсы</div>
-    <div>Задания</div>
-    <div>Лидеры</div>
-    <div onclick="openPage('profile')">Профиль</div>
+<!-- ПРОФИЛЬ -->
+<div class="container" id="profile" style="display:none;">
+
+    <div class="card">
+        <h2 id="profile_name">@user</h2>
+        <p>0 TON</p>
+    </div>
+
 </div>
 
-<script src="app.js"></script>
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="bottom">
+    <div class="tab active" onclick="openTab('main', this)">Кейсы</div>
+    <div class="tab" onclick="openTab('profile', this)">Профиль</div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.expand();
+
+// ===== USER DATA =====
+const user = tg.initDataUnsafe?.user;
+
+if (user) {
+    document.getElementById("username").innerText =
+        "@" + (user.username || user.first_name);
+
+    document.getElementById("userid").innerText = user.id;
+    document.getElementById("profile_name").innerText =
+        "@" + (user.username || user.first_name);
+}
+
+// ===== АНТИ-АБУЗ (1 РАЗ В ДЕНЬ) =====
+const today = new Date().toDateString();
+const lastOpen = localStorage.getItem("free_case_date");
+
+function checkFreeCase() {
+    if (lastOpen === today) {
+        document.getElementById("freeStatus").innerText = "❌ Уже открыто сегодня";
+    } else {
+        document.getElementById("freeStatus").innerText = "✅ Доступно";
+    }
+}
+
+function openFreeCase() {
+    if (lastOpen === today) {
+        tg.showAlert("Ты уже открывал кейс сегодня 😢");
+        return;
+    }
+
+    localStorage.setItem("free_case_date", today);
+
+    tg.showAlert("🎉 Ты выиграл награду!");
+    checkFreeCase();
+}
+
+checkFreeCase();
+
+// ===== ТАБЫ =====
+function openTab(id, el) {
+    document.getElementById("main").style.display = "none";
+    document.getElementById("profile").style.display = "none";
+
+    document.getElementById(id).style.display = "block";
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    el.classList.add("active");
+}
+</script>
 
 </body>
 </html>
