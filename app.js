@@ -1,57 +1,59 @@
-function openCase() {
-    const lastOpen = localStorage.getItem("free_case_time");
-    const now = Date.now();
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-    // 24 часа
+/* переключение */
+function openPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    if (id === "profile") loadProfile();
+}
+
+/* рулетка */
+function spin() {
+    const prizes = ["0 TON", "0.1 TON", "0.5 TON"];
+    const win = prizes[Math.floor(Math.random() * prizes.length)];
+
+    document.getElementById("result").innerText = "Выпало: " + win;
+}
+
+/* бесплатный кейс */
+function openCase() {
+    const last = localStorage.getItem("free");
+    const now = Date.now();
     const DAY = 86400000;
 
-    if (lastOpen && now - lastOpen < DAY) {
-        const left = Math.ceil((DAY - (now - lastOpen)) / 1000 / 60);
-        document.getElementById("free-result").innerText =
-            "Попробуй позже (" + left + " мин)";
+    if (last && now - last < DAY) {
+        alert("Уже открывал сегодня");
         return;
     }
 
-    const caseEl = document.getElementById("case");
-    caseEl.classList.add("opening");
+    const prizes = ["0 TON", "0.1 TON", "0.5 TON"];
+    const win = prizes[Math.floor(Math.random() * prizes.length)];
 
-    setTimeout(() => {
-        caseEl.classList.remove("opening");
+    document.getElementById("free-result").innerText = "Ты получил: " + win;
 
-        const prizes = ["0 TON", "0.1 TON", "0.5 TON"];
-        const win = prizes[Math.floor(Math.random() * prizes.length)];
-
-        document.getElementById("free-result").innerText =
-            "Ты получил: " + win;
-
-        localStorage.setItem("free_case_time", now);
-    }, 1000);
+    localStorage.setItem("free", now);
 }
 
+/* профиль */
 function loadProfile() {
-    const user = window.Telegram.WebApp.initDataUnsafe.user;
+    const user = tg.initDataUnsafe.user;
 
     if (!user) return;
 
-    document.getElementById("username").innerText = "@" + user.username;
+    document.getElementById("username").innerText = "@" + (user.username || "user");
 
     if (user.photo_url) {
         document.getElementById("avatar").src = user.photo_url;
     }
-
-    // данные (пока локально)
-    document.getElementById("games").innerText =
-        localStorage.getItem("games") || 0;
-
-    document.getElementById("best").innerText =
-        localStorage.getItem("best") || "0 TON";
 }
 
-/* пригласить */
+/* инвайт */
 function invite() {
-    const link = "https://t.me/ТВОЙ_БОТ?start=" + 
-        window.Telegram.WebApp.initDataUnsafe.user.id;
+    const user = tg.initDataUnsafe.user;
+    const link = "https://t.me/ТВОЙ_БОТ?start=" + user.id;
 
     navigator.clipboard.writeText(link);
-    alert("Ссылка скопирована!");
+    alert("Ссылка скопирована");
 }
