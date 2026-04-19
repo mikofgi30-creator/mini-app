@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Case App</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      font-family: Arial;
+    }
+    .box {
+      margin-top: 100px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #22c55e;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>🎁 Бесплатный кейс</h1>
+  <p>Раз в 24 часа</p>
+  <button onclick="openCase()">Открыть</button>
+  <p id="result"></p>
+</div>
+
+<script>
+function openCase() {
+  const rewards = [
+    "Mood Pack",
+    "Candy Cane",
+    "UFC Strike",
+    "10 ⭐",
+    "15 ⭐",
+    "50 ⭐",
+    "100 ⭐"
+  ];
+
+  const result = rewards[Math.floor(Math.random() * rewards.length)];
+  document.getElementById("result").innerText = "Ты получил: " + result;
+}
+</script>
+
+</body>
+</html>
