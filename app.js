@@ -27,3 +27,31 @@ function openCase() {
         localStorage.setItem("free_case_time", now);
     }, 1000);
 }
+
+function loadProfile() {
+    const user = window.Telegram.WebApp.initDataUnsafe.user;
+
+    if (!user) return;
+
+    document.getElementById("username").innerText = "@" + user.username;
+
+    if (user.photo_url) {
+        document.getElementById("avatar").src = user.photo_url;
+    }
+
+    // данные (пока локально)
+    document.getElementById("games").innerText =
+        localStorage.getItem("games") || 0;
+
+    document.getElementById("best").innerText =
+        localStorage.getItem("best") || "0 TON";
+}
+
+/* пригласить */
+function invite() {
+    const link = "https://t.me/ТВОЙ_БОТ?start=" + 
+        window.Telegram.WebApp.initDataUnsafe.user.id;
+
+    navigator.clipboard.writeText(link);
+    alert("Ссылка скопирована!");
+}
