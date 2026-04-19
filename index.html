@@ -4,154 +4,235 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mini App</title>
+<title>Cases App</title>
 
-<!-- Telegram WebApp -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont;
-    background: #0f0f0f;
+    background: #0f1115;
     color: white;
 }
 
-.container {
-    padding: 20px;
+/* HEADER */
+.header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
 }
 
+/* BALANCE */
+.balance {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 12px;
+    border-radius: 12px;
+}
+
+/* PAGES */
+.page { display: none; padding: 20px; }
+.page.active { display: block; }
+
+/* CARDS */
 .card {
-    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+    padding: 20px;
     border-radius: 20px;
-    padding: 15px;
     margin-bottom: 15px;
+    background: linear-gradient(135deg,#2a2a2a,#1a1a1a);
 }
 
+/* BUTTON */
 .btn {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    border-radius: 20px;
-    padding: 15px;
-    text-align: center;
-    font-weight: bold;
     margin-top: 10px;
-    cursor: pointer;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    background: linear-gradient(135deg,#4a8cff,#2c5cff);
 }
 
-.bottom {
+/* PROFILE */
+.avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+}
+
+/* BOTTOM NAV (iOS style) */
+.nav {
     position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #111;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(30,30,35,0.6);
+    backdrop-filter: blur(25px);
+    border-radius: 25px;
     display: flex;
     justify-content: space-around;
-    padding: 10px 0;
+    padding: 10px;
 }
 
-.tab {
-    text-align: center;
-    font-size: 12px;
+.nav div {
     color: gray;
-    cursor: pointer;
+    font-size: 12px;
 }
 
-.tab.active {
-    color: #4facfe;
+.nav .active {
+    color: #4a8cff;
+}
+
+/* ROULETTE */
+.roulette {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.items {
+    font-size: 28px;
+    height: 50px;
+    overflow: hidden;
+}
+
+.spin {
+    margin-top: 20px;
+}
+
+/* ANIMATION */
+@keyframes spinAnim {
+    0% {transform: translateY(0);}
+    100% {transform: translateY(-500px);}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="main">
-
-    <div class="card">
-        <h2 id="username">Загрузка...</h2>
-        <p>ID: <span id="userid"></span></p>
-    </div>
-
-    <div class="card">
-        <h3>🎁 Бесплатный кейс</h3>
-        <p id="freeStatus">Проверка...</p>
-        <div class="btn" onclick="openFreeCase()">Открыть</div>
-    </div>
-
-    <div class="card">
-        <h3>🎡 Рулетка</h3>
-        <div class="btn">Играть</div>
-    </div>
-
+<div class="header">
+    <div id="user">👋</div>
+    <div class="balance" id="balance">0 TON</div>
 </div>
 
-<!-- ПРОФИЛЬ -->
-<div class="container" id="profile" style="display:none;">
-
+<!-- CASES -->
+<div id="cases" class="page active">
     <div class="card">
-        <h2 id="profile_name">@user</h2>
-        <p>0 TON</p>
-    </div>
+        <h3>🎰 Кейс (1 TON)</h3>
 
+        <div class="roulette">
+            <div id="roll" class="items">🎁</div>
+        </div>
+
+        <div class="btn spin" onclick="spin(false)">Крутить</div>
+        <div class="btn" onclick="spin(true)">Демо</div>
+    </div>
 </div>
 
-<!-- НИЖНЕЕ МЕНЮ -->
-<div class="bottom">
-    <div class="tab active" onclick="openTab('main', this)">Кейсы</div>
-    <div class="tab" onclick="openTab('profile', this)">Профиль</div>
+<!-- PROFILE -->
+<div id="profile" class="page">
+    <div class="card">
+        <img id="avatar" class="avatar">
+        <h3 id="name">@user</h3>
+
+        <div class="btn" onclick="deposit()">Пополнить</div>
+        <div class="btn" onclick="withdraw()">Вывести</div>
+    </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+    <div class="active" onclick="openPage('cases',this)">Кейсы</div>
+    <div onclick="openPage('profile',this)">Профиль</div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-
 tg.ready();
 tg.expand();
 
-// ===== USER DATA =====
+/* USER */
 const user = tg.initDataUnsafe?.user;
 
 if (user) {
-    document.getElementById("username").innerText =
+    document.getElementById("user").innerText =
         "@" + (user.username || user.first_name);
 
-    document.getElementById("userid").innerText = user.id;
-    document.getElementById("profile_name").innerText =
+    document.getElementById("name").innerText =
         "@" + (user.username || user.first_name);
-}
 
-// ===== АНТИ-АБУЗ (1 РАЗ В ДЕНЬ) =====
-const today = new Date().toDateString();
-const lastOpen = localStorage.getItem("free_case_date");
-
-function checkFreeCase() {
-    if (lastOpen === today) {
-        document.getElementById("freeStatus").innerText = "❌ Уже открыто сегодня";
-    } else {
-        document.getElementById("freeStatus").innerText = "✅ Доступно";
+    if (user.photo_url) {
+        document.getElementById("avatar").src = user.photo_url;
     }
 }
 
-function openFreeCase() {
-    if (lastOpen === today) {
-        tg.showAlert("Ты уже открывал кейс сегодня 😢");
-        return;
-    }
+/* BALANCE */
+let balance = Number(localStorage.getItem("bal")) || 10;
+updateBalance();
 
-    localStorage.setItem("free_case_date", today);
-
-    tg.showAlert("🎉 Ты выиграл награду!");
-    checkFreeCase();
+function updateBalance(){
+    document.getElementById("balance").innerText = balance + " TON";
 }
 
-checkFreeCase();
+/* PAGES */
+function openPage(id,el){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 
-// ===== ТАБЫ =====
-function openTab(id, el) {
-    document.getElementById("main").style.display = "none";
-    document.getElementById("profile").style.display = "none";
+    document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+}
 
-    document.getElementById(id).style.display = "block";
+/* CASE ITEMS */
+const items = [
+    "Durov's Ceps",
+    "Victory Medal",
+    "Light Sword",
+    "Ufc Strike",
+    "10 ⭐"
+];
 
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    el.classList.add("active");
+/* SPIN */
+function spin(demo){
+    if(!demo){
+        if(balance < 1){
+            tg.showAlert("Нет TON");
+            return;
+        }
+        balance -= 1;
+        updateBalance();
+        localStorage.setItem("bal", balance);
+    }
+
+    let roll = document.getElementById("roll");
+    let i = 0;
+
+    let interval = setInterval(()=>{
+        roll.innerText = items[Math.floor(Math.random()*items.length)];
+        i++;
+        if(i > 20){
+            clearInterval(interval);
+
+            let result;
+
+            if(demo){
+                // 9% норм шанс
+                result = Math.random() < 0.09 ? items[Math.floor(Math.random()*4)] : "10 ⭐";
+            }else{
+                // 0.01% редкие
+                result = Math.random() < 0.0001 ? items[Math.floor(Math.random()*4)] : "10 ⭐";
+            }
+
+            roll.innerText = result;
+            tg.showAlert("Выпало: " + result);
+        }
+    },100);
+}
+
+/* FAKE PAY */
+function deposit(){
+    tg.showAlert("Пополнение через бота (нужно backend)");
+}
+
+function withdraw(){
+    tg.showAlert("Вывод через бота (нужно backend)");
 }
 </script>
 
