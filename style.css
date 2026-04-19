@@ -22,3 +22,49 @@
     color: white;
     border: none;
 }
+
+.profile-card {
+    background: linear-gradient(135deg, #7a2cff, #ff4fd8);
+    padding: 25px;
+    border-radius: 25px;
+    text-align: center;
+}
+
+.avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 20px;
+}
+
+.invite-box {
+    margin-top: 20px;
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.invite-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a855f7, #d946ef);
+    border: none;
+    color: white;
+    font-size: 16px;
+}
