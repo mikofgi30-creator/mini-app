@@ -2,91 +2,168 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mini App</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont;
+    background: #0f1115;
+    color: white;
 }
 
-.container {
-  padding: 20px;
+/* верх */
+.header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+/* баланс */
+.balance {
+    background: rgba(255,255,255,0.05);
+    padding: 10px 15px;
+    border-radius: 15px;
+}
+
+/* страницы */
+.page {
+    display: none;
+    padding: 20px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* карточки */
 .card {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 18px;
-  border-radius: 20px;
-  margin-bottom: 15px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: 0.2s;
+    padding: 18px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
 }
 
-.card:hover {
-  transform: scale(1.02);
+.card:active {
+    transform: scale(0.96);
 }
 
-/* Бесплатно */
 .free {
-  background: linear-gradient(135deg, #374151, #1f2937);
+    background: linear-gradient(135deg, #3a3f47, #2a2e35);
 }
 
-/* Рулетка */
 .roulette {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+    background: linear-gradient(135deg, #4a8cff, #2c5cff);
 }
 
 .icon {
-  font-size: 28px;
+    font-size: 24px;
+    margin-right: 10px;
 }
 
-.title {
-  font-weight: bold;
+/* рулетка */
+.roulette-box {
+    text-align: center;
+    margin-top: 50px;
 }
 
-.subtitle {
-  font-size: 14px;
-  opacity: 0.7;
+.spin-btn {
+    margin-top: 20px;
+    padding: 15px;
+    background: #4a8cff;
+    border-radius: 15px;
 }
+
+/* нижнее меню */
+.bottom-nav {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(30,30,35,0.6);
+    backdrop-filter: blur(25px);
+    border-radius: 25px;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+.nav-item {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.nav-item.active {
+    color: #4a8cff;
+}
+
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">
+    <div>👋 Привет</div>
+    <div class="balance">0 TON</div>
+</div>
 
-  <div class="card free" onclick="openFree()">
-    <div class="icon">🎁</div>
-    <div>
-      <div class="title">Бесплатно</div>
-      <div class="subtitle">1 кейс</div>
+<!-- ГЛАВНАЯ -->
+<div id="home" class="page active">
+    <div class="card free" onclick="openPage('free')">
+        <div class="icon">🎁</div> Бесплатно
     </div>
-  </div>
 
-  <div class="card roulette" onclick="openRoulette()">
-    <div class="icon">⭐</div>
-    <div>
-      <div class="title">Рулетка</div>
-      <div class="subtitle">Испытай удачу</div>
+    <div class="card roulette" onclick="openPage('roulette')">
+        <div class="icon">⭐</div> Рулетка
     </div>
-  </div>
+</div>
 
+<!-- БЕСПЛАТНО -->
+<div id="free" class="page">
+    <h2>🎁 Бесплатный кейс</h2>
+    <p>Нажми, чтобы получить награду</p>
+</div>
+
+<!-- РУЛЕТКА -->
+<div id="roulette" class="page">
+    <div class="roulette-box">
+        <h2>🎰 Рулетка</h2>
+        <div id="result">Нажми крутить</div>
+        <div class="spin-btn" onclick="spin()">Крутить</div>
+    </div>
+</div>
+
+<!-- МЕНЮ -->
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="openPage('home')">Кейсы</div>
+    <div class="nav-item">Конкурсы</div>
+    <div class="nav-item">Задания</div>
+    <div class="nav-item">Лидеры</div>
+    <div class="nav-item">Профиль</div>
 </div>
 
 <script>
-function openFree() {
-  alert("Открытие бесплатного кейса 🎁");
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+/* переключение страниц */
+function openPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-function openRoulette() {
-  alert("Рулетка 🎰");
+/* рулетка */
+function spin() {
+    const prizes = ["0 TON", "0.1 TON", "0.5 TON", "1 TON"];
+    const win = prizes[Math.floor(Math.random() * prizes.length)];
+    document.getElementById("result").innerText = "Выпало: " + win;
 }
 </script>
 
