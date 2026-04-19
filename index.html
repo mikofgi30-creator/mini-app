@@ -4,58 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mini App</title>
+
 <link rel="stylesheet" href="style.css">
-<script src="app.js"></script>
-    
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
 
-<style>
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont;
-    background: #0f1115;
-    color: white;
-}
+<body>
 
-/* верх */
-.header {
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+<!-- HEADER -->
+<div class="header">
+    <div>👋 Привет</div>
+    <div class="balance">0 TON</div>
+</div>
 
-/* баланс */
-.balance {
-    background: rgba(255,255,255,0.05);
-    padding: 10px 15px;
-    border-radius: 15px;
-}
+<!-- ГЛАВНАЯ -->
+<div id="home" class="page active">
+    <div class="card free" onclick="openPage('free')">🎁 Бесплатно</div>
+    <div class="card roulette" onclick="openPage('roulette')">⭐ Рулетка</div>
+</div>
 
-/* страницы */
-.page {
-    display: none;
-    padding: 20px;
-}
-
-.page.active {
-    display: block;
-}
-
-/* карточки */
-.card {
-    padding: 18px;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    transition: 0.2s;
-}
-
-.card:active {
-    transform: scale(0.96);
-}
-
+<!-- FREE -->
 <div id="free" class="page">
     <h2>🎁 Бесплатный кейс</h2>
 
@@ -64,127 +32,22 @@ body {
     </div>
 
     <div id="free-result">Нажми открыть</div>
-
     <button class="open-btn" onclick="openCase()">Открыть</button>
 </div>
 
-.roulette {
-    background: linear-gradient(135deg, #4a8cff, #2c5cff);
-}
-
-.icon {
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-/* рулетка */
-.roulette-box {
-    text-align: center;
-    margin-top: 50px;
-}
-
-.spin-btn {
-    margin-top: 20px;
-    padding: 15px;
-    background: #4a8cff;
-    border-radius: 15px;
-}
-
-/* нижнее меню */
-.bottom-nav {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    background: rgba(30,30,35,0.6);
-    backdrop-filter: blur(25px);
-    border-radius: 25px;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-}
-
-.nav-item {
-    text-align: center;
-    font-size: 12px;
-    color: #aaa;
-}
-
-.nav-item.active {
-    color: #4a8cff;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="header">
-    <div>👋 Привет</div>
-    <div class="balance">0 TON</div>
-</div>
-
-<!-- ГЛАВНАЯ -->
-<div id="home" class="page active">
-    <div class="card free" onclick="openPage('free')">
-        <div class="icon">🎁</div> Бесплатно
-    </div>
-
-    <div class="card roulette" onclick="openPage('roulette')">
-        <div class="icon">⭐</div> Рулетка
-    </div>
-</div>
-
-<!-- БЕСПЛАТНО -->
-<div id="free" class="page">
-    <h2>🎁 Бесплатный кейс</h2>
-    <p>Нажми, чтобы получить награду</p>
-</div>
-
-<!-- РУЛЕТКА -->
+<!-- ROULETTE -->
 <div id="roulette" class="page">
-    <div class="roulette-box">
-        <h2>🎰 Рулетка</h2>
-        <div id="result">Нажми крутить</div>
-        <div class="spin-btn" onclick="spin()">Крутить</div>
-    </div>
+    <h2>🎰 Рулетка</h2>
+    <div id="result">Нажми крутить</div>
+    <button onclick="spin()">Крутить</button>
 </div>
 
-<!-- МЕНЮ -->
-<div class="bottom-nav">
-    <div class="nav-item active" onclick="openPage('home')">Кейсы</div>
-    <div class="nav-item">Конкурсы</div>
-    <div class="nav-item">Задания</div>
-    <div class="nav-item">Лидеры</div>
-    <div class="nav-item">Профиль</div>
-</div>
-
-<script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-/* переключение страниц */
-function openPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-/* рулетка */
-function spin() {
-    const prizes = ["0 TON", "0.1 TON", "0.5 TON", "1 TON"];
-    const win = prizes[Math.floor(Math.random() * prizes.length)];
-    document.getElementById("result").innerText = "Выпало: " + win;
-}
-</script>
-
-</body>
-</html>
-
+<!-- PROFILE -->
 <div id="profile" class="page">
 
     <div class="profile-card">
-        <img id="avatar" class="avatar" src="">
-        <div id="username" class="username">@user</div>
+        <img id="avatar" class="avatar">
+        <div id="username">@user</div>
 
         <div class="stats">
             <div>
@@ -198,13 +61,20 @@ function spin() {
         </div>
     </div>
 
-    <div class="invite-box">
-        <div class="invite-title">Get More Benefits</div>
-        <div class="invite-text">
-            Чем больше друзей — тем выше % дохода
-        </div>
-    </div>
-
     <button class="invite-btn" onclick="invite()">Invite friends +</button>
 
 </div>
+
+<!-- NAV -->
+<div class="bottom-nav">
+    <div onclick="openPage('home')">Кейсы</div>
+    <div>Конкурсы</div>
+    <div>Задания</div>
+    <div>Лидеры</div>
+    <div onclick="openPage('profile')">Профиль</div>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
