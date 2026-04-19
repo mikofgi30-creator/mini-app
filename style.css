@@ -1,70 +1,76 @@
-.case-box {
+body {
+    margin: 0;
+    font-family: -apple-system;
+    background: #0f1115;
+    color: white;
+}
+
+.header {
     display: flex;
-    justify-content: center;
-    margin-top: 40px;
+    justify-content: space-between;
+    padding: 20px;
 }
 
-#case {
-    font-size: 80px;
-    transition: 0.4s;
+.page {
+    display: none;
+    padding: 20px;
 }
 
-/* анимация */
-.opening {
-    transform: scale(1.3) rotate(20deg);
+.page.active {
+    display: block;
+}
+
+.card {
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.free { background: #333; }
+.roulette { background: #4a8cff; }
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: #111;
+    padding: 10px;
+}
+
+/* FREE */
+.case-box {
+    text-align: center;
+    font-size: 70px;
 }
 
 .open-btn {
     margin-top: 20px;
-    padding: 15px;
-    border-radius: 15px;
-    background: #4a8cff;
-    color: white;
-    border: none;
+    padding: 10px;
 }
 
+/* PROFILE */
 .profile-card {
     background: linear-gradient(135deg, #7a2cff, #ff4fd8);
-    padding: 25px;
-    border-radius: 25px;
+    padding: 20px;
+    border-radius: 20px;
     text-align: center;
 }
 
 .avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-}
-
-.username {
-    font-size: 18px;
-    font-weight: bold;
+    width: 60px;
+    border-radius: 15px;
 }
 
 .stats {
     display: flex;
     justify-content: space-around;
-    margin-top: 20px;
-    background: rgba(0,0,0,0.2);
-    padding: 15px;
-    border-radius: 20px;
-}
-
-.invite-box {
-    margin-top: 20px;
-    background: #2a2a2a;
-    padding: 15px;
-    border-radius: 15px;
+    margin-top: 10px;
 }
 
 .invite-btn {
     margin-top: 20px;
     width: 100%;
     padding: 15px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #a855f7, #d946ef);
-    border: none;
-    color: white;
-    font-size: 16px;
 }
