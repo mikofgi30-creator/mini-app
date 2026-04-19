@@ -1,52 +1,92 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Case App</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      font-family: Arial;
-    }
-    .box {
-      margin-top: 100px;
-    }
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      background: #22c55e;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Mini App</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* Бесплатно */
+.free {
+  background: linear-gradient(135deg, #374151, #1f2937);
+}
+
+/* Рулетка */
+.roulette {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.icon {
+  font-size: 28px;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+}
+</style>
+
 </head>
+
 <body>
 
-<div class="box">
-  <h1>🎁 Бесплатный кейс</h1>
-  <p>Раз в 24 часа</p>
-  <button onclick="openCase()">Открыть</button>
-  <p id="result"></p>
+<div class="container">
+
+  <div class="card free" onclick="openFree()">
+    <div class="icon">🎁</div>
+    <div>
+      <div class="title">Бесплатно</div>
+      <div class="subtitle">1 кейс</div>
+    </div>
+  </div>
+
+  <div class="card roulette" onclick="openRoulette()">
+    <div class="icon">⭐</div>
+    <div>
+      <div class="title">Рулетка</div>
+      <div class="subtitle">Испытай удачу</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-function openCase() {
-  const rewards = [
-    "Mood Pack",
-    "Candy Cane",
-    "UFC Strike",
-    "10 ⭐",
-    "15 ⭐",
-    "50 ⭐",
-    "100 ⭐"
-  ];
+function openFree() {
+  alert("Открытие бесплатного кейса 🎁");
+}
 
-  const result = rewards[Math.floor(Math.random() * rewards.length)];
-  document.getElementById("result").innerText = "Ты получил: " + result;
+function openRoulette() {
+  alert("Рулетка 🎰");
 }
 </script>
 
